@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import MusicCard from '../components/MusicCard';
 import Loading from '../components/Loading';
 import getMusics from '../services/musicsAPI';
+import { getFavoriteSongs } from '../services/favoriteSongsAPI';
 
 class Album extends React.Component {
   constructor() {
@@ -14,11 +15,13 @@ class Album extends React.Component {
       albumName: '',
       foundMusics: [],
       loading: false,
+      favSongList: [],
     };
   }
 
   componentDidMount() {
     this.searchMusicAlbum();
+    this.handleGetFavoriteSongs();
   }
 
   searchMusicAlbum = async () => {
@@ -44,12 +47,26 @@ class Album extends React.Component {
     });
   }
 
+  handleGetFavoriteSongs = async () => {
+    this.setState({
+      loading: true,
+    });
+
+    const getFavSongList = await getFavoriteSongs();
+
+    this.setState({
+      loading: false,
+      favSongList: getFavSongList,
+    });
+  }
+
   render() {
     const {
       artistName,
       albumName,
       foundMusics,
       loading,
+      favSongList,
     } = this.state;
 
     return (
@@ -71,6 +88,7 @@ class Album extends React.Component {
                   trackId={ preview.trackId }
                   trackName={ preview.trackName }
                   previewUrl={ preview.previewUrl }
+                  favSongList={ favSongList }
                 />
               ))}
           </div>
